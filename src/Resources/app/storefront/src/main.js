@@ -1,10 +1,8 @@
 const PluginManager = window.PluginManager;
 
-// Register storefront plugins against a data attribute, lazily imported so the
-// bundle only loads on pages that actually use it.
-//
-// PluginManager.register(
-//     'NotificationsExample',
-//     () => import('./example-plugin/example.plugin'),
-//     '[data-notifications-example]'
-// );
+// Lazily imported so the bundle only loads on pages that render a phone field.
+PluginManager.register(
+    'KommandhubDialCodePhone',
+    () => import('./dial-code-phone/dial-code-phone.plugin'),
+    '[data-kommandhub-dial-code-phone]'
+);

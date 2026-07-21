@@ -1,0 +1,23 @@
+/*
+ * Layout is Bootstrap's `.input-group`, which is what the storefront already
+ * uses for adjoined controls — no custom flex work, and the pairing stays
+ * aligned with the theme's own field styling.
+ *
+ * Only two things need saying beyond that.
+ */
+
+.kommandhub-dial-code-phone {
+    &__code {
+        // The select sizes to its content ("NG +234") instead of taking half the
+        // group, so the number keeps the room. Capped because a few entries are
+        // wide enough to crowd the input on a narrow viewport.
+        max-width: 40%;
+    }
+
+    &__national {
+        // Bootstrap gives a grouped control a flat inner corner; the invalid
+        // outline otherwise renders behind the select's edge.
+        position: relative;
+        z-index: 1;
+    }
+}

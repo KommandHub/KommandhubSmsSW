@@ -1,0 +1,37 @@
+{% sw_extends '@Storefront/storefront/element/cms-element-form/form-components/cms-element-form-input.html.twig' %}
+
+{#
+    Swaps in the dial-code phone field for phone inputs only; every other input
+    type falls through to core untouched via parent().
+
+    Two conditions, not one. `type == 'phone'` is the documented contract for a
+    custom CMS form that declares its field type. Shopware's own contact form,
+    however, passes only `fieldName: 'phone'` and no `type` at all — it sets
+    `type` for email but not for phone — so matching on type alone would never
+    fire on the stock contact form, which is the main place this needs to work.
+#}
+{% block cms_element_form_input %}
+    {% if type == 'phone' or fieldName == 'phone' %}
+
+        {% set validationRules = [] %}
+
+        {% if required %}
+            {% set validationRules = validationRules|merge(['required']) %}
+        {% endif %}
+
+        {% sw_include '@Storefront/storefront/component/form/kommandhub-dial-code-phone.html.twig' with {
+            label: label|trans,
+            id: formPrefix ~ '-form-' ~ fieldName,
+            name: fieldName,
+            value: data.get(fieldName),
+            placeholder: placeholder|trans,
+            autocomplete: autocomplete,
+            violationPath: '/' ~ fieldName,
+            validationRules: (validationRules is not empty) ? validationRules|join(','),
+            additionalClass: additionalClass,
+        } %}
+
+    {% else %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}
