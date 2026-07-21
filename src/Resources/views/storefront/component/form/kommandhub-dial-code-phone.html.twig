@@ -1,0 +1,111 @@
+{#
+    -- Dial Code Phone Field --
+
+    Renders a country dial-code select next to a national phone number input,
+    laid out inline as "+234 | 8031234567".
+
+    Shopware stores one merged string, so this component keeps the *national*
+    input as the named field. Without JavaScript it therefore degrades to
+    exactly the core behaviour: one text field that posts what was typed. The
+    storefront plugin takes the name over on init and posts the merged value
+    from a hidden field instead, so the visible input never holds the dial code
+    and can never be double-prefixed on a re-submitted form.
+
+    Properties:
+
+    * id (required) - id of the national number input; the label points at it.
+    * name (required) - the name Shopware expects for the merged value.
+    * value (optional) - the stored, merged number; split back across the two fields.
+    * label (optional) - label text.
+    * placeholder (optional) - placeholder of the national input.
+    * autocomplete (optional) - autocomplete token for the national input.
+    * validationRules (optional) - comma separated client validation rules.
+    * violationPath (optional) - key for server-side violations.
+    * additionalClass (optional) - classes for the form-group wrapper.
+#}
+{% block component_kommandhub_dial_code_phone %}
+
+    {% set splitValue = kommandhub_sms_split_phone(value) %}
+    {% set selectedDialCode = splitValue.dialCode ?: kommandhub_sms_default_dial_code(context) %}
+
+    {% set isInvalid = false %}
+
+    {% if violationPath is not empty and formViolations.getViolations(violationPath) is not empty %}
+        {% set isInvalid = true %}
+    {% endif %}
+
+    {% set feedbackId = "#{id}-feedback" %}
+    {% set dialCodeId = "#{id}-dial-code" %}
+
+    {# `noDialCode` is registered by the storefront plugin against
+       window.formValidation, so it participates in the normal form handling
+       rather than needing its own submit interception. #}
+    {% set nationalValidationRules = validationRules is not empty
+        ? "#{validationRules},noDialCode"
+        : 'noDialCode' %}
+
+    <div class="form-group{% if additionalClass is not empty %} {{ additionalClass }}{% endif %}">
+
+        {% block component_kommandhub_dial_code_phone_label %}
+            {% if label %}
+                <label class="form-label" for="{{ id }}">
+                    {{ label|raw }}
+
+                    {% if 'required' in validationRules %}
+                        <span class="form-required-label" aria-hidden="true">{{ 'general.required'|trans|sw_sanitize }}</span>
+                    {% endif %}
+                </label>
+            {% endif %}
+        {% endblock %}
+
+        {% block component_kommandhub_dial_code_phone_group %}
+            <div class="input-group kommandhub-dial-code-phone"
+                 data-kommandhub-dial-code-phone="true"
+                 data-kommandhub-dial-code-phone-options="{{ {
+                     fieldName: name,
+                 }|json_encode }}"
+                 data-kommandhub-dial-code-phone-message="{{ 'kommandhub-sms.storefront.dialCodeInNumberError'|trans|sw_sanitize }}">
+
+                {% block component_kommandhub_dial_code_phone_select %}
+                    <select class="form-select flex-grow-0 w-auto kommandhub-dial-code-phone__code"
+                            id="{{ dialCodeId }}"
+                            aria-label="{{ 'kommandhub-sms.storefront.dialCodeLabel'|trans|sw_sanitize }}">
+
+                        <option value=""{% if not selectedDialCode %} selected{% endif %}>
+                            {{ 'kommandhub-sms.storefront.dialCodePlaceholder'|trans|sw_sanitize }}
+                        </option>
+
+                        {% for entry in kommandhub_sms_dial_codes() %}
+                            <option value="{{ entry.dialCode }}"
+                                    data-iso="{{ entry.iso }}"
+                                    {% if selectedDialCode == entry.dialCode %}selected{% endif %}>
+                                {{ entry.label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                {% endblock %}
+
+                {% block component_kommandhub_dial_code_phone_input %}
+                    <input type="tel"
+                           class="form-control kommandhub-dial-code-phone__national{% if isInvalid %} is-invalid{% endif %}"
+                           id="{{ id }}"
+                           name="{{ name }}"
+                           aria-describedby="{{ feedbackId }}"
+                           {% if splitValue.national is not empty %}value="{{ splitValue.national }}"{% endif %}
+                           {% if placeholder is not empty %}placeholder="{{ placeholder }}"{% endif %}
+                           {% if autocomplete is not empty %}autocomplete="{{ autocomplete }}"{% endif %}
+                           data-validation="{{ nationalValidationRules }}"
+                           {% if 'required' in validationRules %}aria-required="true"{% endif %}>
+                {% endblock %}
+            </div>
+        {% endblock %}
+
+        {% block component_kommandhub_dial_code_phone_feedback %}
+            <div id="{{ feedbackId }}" class="form-field-feedback">
+                {% if violationPath is not empty and formViolations.getViolations(violationPath) is not empty %}
+                    {% sw_include '@Storefront/storefront/utilities/form-violation.html.twig' %}
+                {% endif %}
+            </div>
+        {% endblock %}
+    </div>
+{% endblock %}

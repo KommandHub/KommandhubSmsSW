@@ -74,6 +74,12 @@ services:
       - { name: 'flow.action', priority: 500, key: 'action.kommandhub.send.sms' }
 
 
+  # Autoconfigure tags this as twig.extension; only the repository needs naming,
+  # since $countryRepository does not match the $templateRepository bind above.
+  Kommandhub\SmsSW\Storefront\Twig\DialCodeExtension:
+    arguments:
+      $countryRepository: '@country.repository'
+
   # Do not extend AbstractController, so they are not auto-tagged.
   Kommandhub\SmsSW\Administration\Controller\NotificationProviderController:
     public: true

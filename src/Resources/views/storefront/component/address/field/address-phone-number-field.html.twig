@@ -1,0 +1,39 @@
+{% sw_extends '@Storefront/storefront/component/address/field/address-phone-number-field.html.twig' %}
+
+{#
+    Replaces the single phone input with a dial-code select plus a national
+    number input, so the country is the shopper's choice rather than a single
+    per-sales-channel setting.
+
+    The whole block is replaced rather than extended: the core block's only job
+    is to build the arguments for one form-input include, and the substitution
+    is that include. The argument derivation (violation path, autocomplete
+    token, required config) is reproduced here because it is what those
+    arguments are.
+#}
+{% block component_address_field_phone_number %}
+    {% if formViolations.getViolations('/phoneNumber') is not empty %}
+        {% set violationPath = '/phoneNumber' %}
+    {% elseif formViolations.getViolations("/#{prefix}/phoneNumber") is not empty %}
+        {% set violationPath = "/#{prefix}/phoneNumber" %}
+    {% endif %}
+
+    {% set phoneAutocomplete = 'tel' %}
+
+    {% if prefix == 'shippingAddress' %}
+        {% set phoneAutocomplete = 'shipping tel' %}
+    {% elseif prefix == 'billingAddress' %}
+        {% set phoneAutocomplete = 'billing tel' %}
+    {% endif %}
+
+    {% sw_include '@Storefront/storefront/component/form/kommandhub-dial-code-phone.html.twig' with {
+        label: 'address.phoneNumberLabel'|trans|sw_sanitize,
+        id: idPrefix ~ prefix ~ 'AddressPhoneNumber',
+        name: prefix ~ '[phoneNumber]',
+        value: data.get('phoneNumber'),
+        autocomplete: phoneAutocomplete,
+        violationPath: violationPath,
+        validationRules: config('core.loginRegistration.phoneNumberFieldRequired') ? 'required',
+        additionalClass: additionalClass ?? 'col-md-6',
+    } %}
+{% endblock %}

@@ -1,6 +1,11 @@
 {
   "kommandhub-sms": {
-    "title": "SMS pour Shopware 6"
+    "title": "SMS pour Shopware 6",
+    "storefront": {
+      "dialCodeLabel": "Indicatif du pays",
+      "dialCodePlaceholder": "Indicatif",
+      "dialCodeInNumberError": "Saisis le numéro sans l'indicatif — choisis le pays dans la liste à côté."
+    }
   },
   "checkout": {
     "notificationsConfigurationError": "This payment method is not configured correctly. Please contact the shop owner."
