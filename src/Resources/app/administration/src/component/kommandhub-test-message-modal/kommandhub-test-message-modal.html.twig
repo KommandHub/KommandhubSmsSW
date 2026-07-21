@@ -1,0 +1,63 @@
+{% block kommandhub_test_message_modal %}
+<sw-modal
+    class="kommandhub-test-message-modal"
+    :title="$t('kommandhub-sms.testMessage.title')"
+    variant="small"
+    @modal-close="onClose"
+>
+
+    {% block kommandhub_test_message_modal_body %}
+    <p class="kommandhub-test-message-modal__hint">
+        {{ $t('kommandhub-sms.testMessage.hint') }}
+    </p>
+
+    <sw-text-field
+        v-model:value="recipient"
+        class="kommandhub-test-message-modal__recipient"
+        required
+        :label="$t('kommandhub-sms.testMessage.labelRecipient')"
+        :help-text="$t('kommandhub-sms.testMessage.helpTextRecipient')"
+        :placeholder="$t('kommandhub-sms.testMessage.placeholderRecipient')"
+        :disabled="isSending"
+    />
+    {% endblock %}
+
+    {% block kommandhub_test_message_modal_preview %}
+    {# Shown only after a failed attempt: on success the modal closes, and the
+       administrator reads the real thing on their handset. #}
+    <div
+        v-if="preview"
+        class="kommandhub-test-message-modal__preview"
+    >
+        <span class="kommandhub-test-message-modal__preview-label">
+            {{ $t('kommandhub-sms.testMessage.labelPreview') }}
+        </span>
+        <p class="kommandhub-test-message-modal__preview-body">{{ preview }}</p>
+    </div>
+    {% endblock %}
+
+    {% block kommandhub_test_message_modal_footer %}
+    <template #modal-footer>
+        <sw-button
+            size="small"
+            :disabled="isSending"
+            @click="onClose"
+        >
+            {{ $t('global.default.cancel') }}
+        </sw-button>
+
+        <sw-button
+            class="kommandhub-test-message-modal__send-action"
+            variant="primary"
+            size="small"
+            :disabled="!canSend"
+            :is-loading="isSending"
+            @click="onSend"
+        >
+            {{ $t('kommandhub-sms.testMessage.buttonSend') }}
+        </sw-button>
+    </template>
+    {% endblock %}
+
+</sw-modal>
+{% endblock %}

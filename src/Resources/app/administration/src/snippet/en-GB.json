@@ -1,0 +1,45 @@
+{
+  "kommandhub-sms": {
+    "title": "SMS for Shopware 6",
+    "testMessage": {
+      "title": "Send test message",
+      "hint": "Sends this template to one number now, using sample order and customer data. It is charged like any other message.",
+      "labelRecipient": "Recipient phone number",
+      "helpTextRecipient": "International format is safest, for example +2348030000000. A local number is expanded with the default dial code from the plugin settings.",
+      "placeholderRecipient": "+2348030000000",
+      "labelPreview": "Message that was rendered",
+      "buttonSend": "Send test",
+      "messageSent": "Test message sent to {recipient}.",
+      "errorUnexpected": "The test message could not be sent.",
+      "error": {
+        "templateNotFound": "This template no longer exists. Save it first, then try again.",
+        "templateEmpty": "This template has no message text for the selected language.",
+        "renderFailed": "The template could not be rendered. Check the Twig placeholders in the message text.",
+        "invalidRecipient": "That phone number is not usable. Use international format, for example +2348030000000.",
+        "providerRejected": "The provider refused the message. Check the sender ID and credentials in the plugin settings.",
+        "providerUnavailable": "The provider is temporarily unavailable. Try again in a moment.",
+        "missingRecipient": "Enter a phone number before sending.",
+        "errorUnexpected": "The test message could not be sent.",
+        "noProviderConfigured": "No provider is configured yet, so nothing was sent. Configure one in the plugin settings."
+      }
+    },
+    "flowAction": {
+      "label": "Send SMS",
+      "description": "Sends the selected SMS template to the customer's mobile number.",
+      "modal": {
+        "title": "Send SMS",
+        "hint": "Sends the selected template to the customer this flow is about. If the customer has no usable mobile number, the SMS is skipped and the rest of the flow — including the email — still runs.",
+        "labelTemplate": "SMS template",
+        "placeholderTemplate": "Select an SMS template…"
+      }
+    }
+  },
+  "sw-privileges": {
+    "additional_permissions": {
+      "notifications": {
+        "label": "SMS for Shopware 6",
+        "manage": "Manage"
+      }
+    }
+  }
+}

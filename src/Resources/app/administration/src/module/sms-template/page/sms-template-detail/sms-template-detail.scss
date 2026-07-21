@@ -1,0 +1,36 @@
+// Shopware's SCSS variables ($color-darkgray-200 and friends) are not in scope
+// for a plugin stylesheet — the Vite build compiles each plugin's SCSS on its
+// own, without the administration's variable sheet. Use the CSS custom
+// properties the admin sets at runtime instead, with a literal fallback so the
+// rule still works if a token is renamed.
+
+.kommandhub-sms-template-detail {
+    &__counter {
+        margin-top: 8px;
+        padding: 12px 16px;
+        border: 1px solid var(--color-border-primary-default, #d1d9e0);
+        border-radius: 4px;
+        background: var(--color-background-primary-default, #f9fafb);
+    }
+
+    // Once a message costs more than one SMS, the price of a wording change is
+    // real and recurring — so the counter stops being neutral.
+    &__counter--warning {
+        border-color: var(--color-border-attention-default, #e5a800);
+        background: var(--color-background-attention-default, #fff8e6);
+    }
+
+    &__counter-item {
+        // Keeps the four readings on one line at desktop width and lets them
+        // wrap individually rather than mid-reading on narrow screens.
+        display: inline-block;
+        margin-right: 24px;
+        white-space: nowrap;
+    }
+
+    &__counter-hint {
+        margin-top: 8px;
+        color: var(--color-darkgray-200, #52667a);
+        font-size: 12px;
+    }
+}

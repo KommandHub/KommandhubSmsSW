@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/6.7/src/Core/System/SystemConfig/Schema/config.xsd">
+
+    <card>
+        <title>Delivery webhook</title>
+        <title lang="de-DE">Zustellungs-Webhook</title>
+
+        <input-field type="password">
+            <name>webhookSecret</name>
+            <label>Webhook signing secret</label>
+            <label lang="de-DE">Webhook-Signaturschlüssel</label>
+            <helpText>
+                The secret your provider signs delivery reports with, posted to
+                /notifications/webhook. For Termii this is its API key. Inbound
+                webhooks are rejected while this is empty.
+            </helpText>
+            <copyable>true</copyable>
+        </input-field>
+    </card>
+
+
+    <card>
+        <title>SMS routing</title>
+        <title lang="de-DE">SMS-Routing</title>
+
+        <input-field type="single-select">
+            <name>defaultSmsProvider</name>
+            <label>Default SMS provider</label>
+            <label lang="de-DE">Standard-SMS-Anbieter</label>
+            <defaultValue>termii</defaultValue>
+            <helpText>
+                Tried first for every message. If it is unavailable, the
+                remaining configured providers are tried in turn, preferring one
+                that covers the destination country. A provider with no
+                credentials is skipped entirely.
+            </helpText>
+            <options>
+                <option><id>termii</id><name>Termii (West Africa)</name></option>
+                <option><id>sendexa</id><name>Sendexa (Ghana)</name></option>
+                <option><id>africasTalking</id><name>Africa's Talking (East Africa)</name></option>
+                <option><id>twilio</id><name>Twilio (international fallback)</name></option>
+            </options>
+        </input-field>
+
+
+        <input-field>
+            <name>defaultDialCode</name>
+            <label>Default country dial code</label>
+            <label lang="de-DE">Standard-Landesvorwahl</label>
+            <defaultValue>234</defaultValue>
+            <helpText>
+                Used to expand national numbers such as "0803…" into
+                international form. Numbers already starting with "+" or "00"
+                are left alone. If this is empty, national numbers are skipped
+                rather than guessed at.
+            </helpText>
+        </input-field>
+    </card>
+
+
+    <card>
+        <title>Termii</title>
+
+        <input-field type="password">
+            <name>termiiApiKey</name>
+            <label>API key</label>
+            <label lang="de-DE">API-Schlüssel</label>
+            <helpText>From the Termii dashboard. Leave empty to disable Termii.</helpText>
+            <copyable>true</copyable>
+        </input-field>
+
+        <input-field>
+            <name>termiiSenderId</name>
+            <label>Sender ID</label>
+            <label lang="de-DE">Absender-ID</label>
+            <helpText>
+                The approved alphanumeric sender your messages appear from.
+                Termii rejects messages sent from an unapproved sender.
+            </helpText>
+        </input-field>
+
+        <input-field type="single-select">
+            <name>termiiRoute</name>
+            <label>Carrier route</label>
+            <label lang="de-DE">Carrier-Route</label>
+            <defaultValue>generic</defaultValue>
+            <helpText>
+                "Generic" is the standard route; "DND" is required to reach
+                Nigerian numbers on the do-not-disturb list and is charged
+                differently.
+            </helpText>
+            <options>
+                <option><id>generic</id><name>Generic</name></option>
+                <option><id>dnd</id><name>DND</name></option>
+            </options>
+        </input-field>
+
+        <input-field>
+            <name>termiiBaseUrl</name>
+            <label>API base URL</label>
+            <label lang="de-DE">API-Basis-URL</label>
+            <helpText>
+                Optional. Defaults to https://v3.api.termii.com — override only
+                if Termii assigned your account a different regional host.
+            </helpText>
+        </input-field>
+    </card>
+
+
+    <card>
+        <title>Sendexa</title>
+
+        <input-field type="password">
+            <name>sendexaApiToken</name>
+            <label>API token</label>
+            <label lang="de-DE">API-Token</label>
+            <helpText>
+                The Base64 token from your Sendexa dashboard, pasted as shown.
+                Leave empty to disable Sendexa.
+            </helpText>
+            <copyable>true</copyable>
+        </input-field>
+
+        <input-field>
+            <name>sendexaSenderId</name>
+            <label>Sender ID</label>
+            <label lang="de-DE">Absender-ID</label>
+            <helpText>
+                The approved sender your messages appear from. Sendexa allows at
+                most 11 characters.
+            </helpText>
+        </input-field>
+
+        <input-field>
+            <name>sendexaBaseUrl</name>
+            <label>API base URL</label>
+            <label lang="de-DE">API-Basis-URL</label>
+            <helpText>
+                Optional. Defaults to https://api.sendexa.co — override only if
+                Sendexa assigned your account a different host.
+            </helpText>
+        </input-field>
+    </card>
+
+
+    <card>
+        <title>Africa's Talking</title>
+
+        <input-field>
+            <name>africasTalkingUsername</name>
+            <label>Username</label>
+            <label lang="de-DE">Benutzername</label>
+            <helpText>
+                Your account username. The literal value "sandbox" switches this
+                provider to the Africa's Talking sandbox environment.
+            </helpText>
+        </input-field>
+
+        <input-field type="password">
+            <name>africasTalkingApiKey</name>
+            <label>API key</label>
+            <label lang="de-DE">API-Schlüssel</label>
+            <helpText>From the Africa's Talking dashboard. Leave empty to disable this provider.</helpText>
+            <copyable>true</copyable>
+        </input-field>
+
+        <input-field>
+            <name>africasTalkingSenderId</name>
+            <label>Sender ID or short code</label>
+            <label lang="de-DE">Absender-ID oder Kurzwahl</label>
+            <helpText>
+                Optional. Leave empty to send from the shared sender pool.
+            </helpText>
+        </input-field>
+    </card>
+
+
+    <card>
+        <title>Twilio</title>
+
+        <input-field>
+            <name>twilioAccountSid</name>
+            <label>Account SID</label>
+            <helpText>Starts with "AC". Leave empty to disable Twilio.</helpText>
+        </input-field>
+
+        <input-field type="password">
+            <name>twilioAuthToken</name>
+            <label>Auth token</label>
+            <label lang="de-DE">Auth-Token</label>
+            <copyable>true</copyable>
+        </input-field>
+
+        <input-field>
+            <name>twilioFrom</name>
+            <label>Sending number</label>
+            <label lang="de-DE">Absendernummer</label>
+            <helpText>In international format, for example +15005550006.</helpText>
+        </input-field>
+
+        <input-field>
+            <name>twilioMessagingServiceSid</name>
+            <label>Messaging service SID</label>
+            <helpText>
+                Optional. Starts with "MG". If set, it replaces the sending
+                number and Twilio picks the sender from that service's pool.
+            </helpText>
+        </input-field>
+    </card>
+
+
+    <card>
+        <title>Logging</title>
+        <title lang="de-DE">Protokollierung</title>
+
+        <input-field type="bool">
+            <name>enableDebugging</name>
+            <label>Enable debug logging</label>
+            <label lang="de-DE">Debug-Protokollierung aktivieren</label>
+            <defaultValue>false</defaultValue>
+            <helpText>
+                Writes debug, info and warning entries to var/log/kommandhub_sms_*.log.
+                Errors are always logged regardless of this setting. Can be scoped
+                to a single sales channel.
+            </helpText>
+            <helpText lang="de-DE">
+                Schreibt Debug-, Info- und Warnungseinträge nach
+                var/log/kommandhub_sms_*.log. Fehler werden unabhängig von dieser
+                Einstellung immer protokolliert.
+            </helpText>
+        </input-field>
+
+        <input-field type="multi-select">
+            <name>logLevels</name>
+            <label>Log levels</label>
+            <label lang="de-DE">Protokollstufen</label>
+            <helpText>
+                Restrict debug logging to specific PSR-3 levels. Leave empty to
+                log every level once debug logging is enabled.
+            </helpText>
+            <options>
+                <option><id>debug</id><name>Debug</name></option>
+                <option><id>info</id><name>Info</name></option>
+                <option><id>notice</id><name>Notice</name></option>
+                <option><id>warning</id><name>Warning</name></option>
+            </options>
+        </input-field>
+    </card>
+</config>

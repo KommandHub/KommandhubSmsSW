@@ -1,0 +1,54 @@
+{
+  "kommandhub-sms-template": {
+    "general": {
+      "mainMenuItemGeneral": "SMS-Vorlagen",
+      "descriptionTextModule": "Benachrichtigungen: die SMS, die Kunden zu jedem Bestellereignis erhalten"
+    },
+    "list": {
+      "columnEvent": "Ereignis",
+      "columnSenderId": "Absender-ID",
+      "columnUpdatedAt": "Zuletzt geändert",
+      "buttonCreate": "SMS-Vorlage hinzufügen",
+      "searchPlaceholder": "SMS-Vorlagen durchsuchen…",
+      "eventMissing": "Kein Ereignis zugewiesen",
+      "senderIdInherited": "Aus den Anbieter-Einstellungen",
+      "emptyStateTitle": "Noch keine SMS-Vorlagen",
+      "emptyStateSubline": "Füge eine Vorlage hinzu, um zusätzlich zur E-Mail von Shopware eine SMS zum selben Ereignis zu senden.",
+      "messageLoadError": "Die SMS-Vorlagen konnten nicht geladen werden.",
+      "messageDeleteSuccess": "Die SMS-Vorlage wurde gelöscht.",
+      "messageDeleteError": "Die SMS-Vorlage konnte nicht gelöscht werden."
+    },
+    "detail": {
+      "textHeadline": "SMS-Vorlage",
+      "textHeadlineNew": "Neue SMS-Vorlage",
+      "cardTitleSettings": "Einstellungen",
+      "cardTitleContent": "Nachricht",
+      "labelEvent": "Ereignis",
+      "helpTextEvent": "Das Shopware-Ereignis, zu dem diese SMS gehört. Sie wird zusätzlich zur E-Mail desselben Ereignisses gesendet.",
+      "placeholderEvent": "Ereignis auswählen…",
+      "labelName": "Interner Name",
+      "helpTextName": "Wird nur in der Vorlagenliste angezeigt und nie an Kunden gesendet.",
+      "labelSenderId": "Absender-ID",
+      "helpTextSenderId": "Überschreibt den beim Anbieter konfigurierten Absender – nur für diese Vorlage. Muss beim Anbieter freigegeben sein.",
+      "placeholderSenderId": "Leer lassen, um die Anbieter-Einstellung zu verwenden",
+      "labelActive": "Aktiv",
+      "labelContent": "Nachrichtentext",
+      "helpTextContent": "Twig wird unterstützt, zum Beispiel {'{{'} order.orderNumber {'}}'}. Kurz halten – je 160 Zeichen wird eine eigene Nachricht berechnet.",
+      "placeholderContent": "Hallo {'{{'} customer.firstName {'}}'}, deine Bestellung {'{{'} order.orderNumber {'}}'} wurde versandt.",
+      "counterCharacters": "{count} Zeichen",
+      "counterEncoding": "Kodierung: {encoding}",
+      "counterSegments": "Segmente: {count}",
+      "counterRemaining": "Noch {count} Zeichen in diesem Segment",
+      "counterUnicodeHint": "Diese Nachricht enthält ein Zeichen außerhalb des GSM-Alphabets – oft ein typografisches Anführungszeichen, ein Emoji oder ein Sonderzeichen. Sie wird deshalb als Unicode gesendet und jedes Segment fasst nur 70 statt 160 Zeichen.",
+      "messageLoadError": "Die SMS-Vorlage konnte nicht geladen werden.",
+      "messageSaveSuccess": "Die SMS-Vorlage wurde gespeichert.",
+      "messageSaveError": "Die SMS-Vorlage konnte nicht gespeichert werden.",
+      "messageEventRequired": "Wähle vor dem Speichern das Ereignis aus, zu dem diese SMS-Vorlage gehört.",
+      "messageNameRequired": "Gib vor dem Speichern einen internen Namen ein.",
+      "messageContentRequired": "Gib vor dem Speichern den Nachrichtentext ein.",
+      "tooltipTestSaved": "Sendet die gespeicherte Fassung dieser Vorlage. Speichere zuerst, wenn du ungespeicherte Änderungen hast.",
+      "tooltipTestUnsaved": "Speichere die Vorlage, bevor du eine Testnachricht sendest.",
+      "tooltipTestNoContent": "Füge Nachrichtentext hinzu, bevor du eine Testnachricht sendest."
+    }
+  }
+}

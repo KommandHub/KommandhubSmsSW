@@ -1,0 +1,45 @@
+{
+  "kommandhub-sms": {
+    "title": "SMS for Shopware 6",
+    "testMessage": {
+      "title": "Testnachricht senden",
+      "hint": "Sendet diese Vorlage jetzt an eine Nummer – mit Beispiel-Bestell- und Kundendaten. Sie wird wie jede andere Nachricht berechnet.",
+      "labelRecipient": "Telefonnummer des Empfängers",
+      "helpTextRecipient": "Internationales Format ist am sichersten, zum Beispiel +2348030000000. Eine lokale Nummer wird mit der Standard-Landesvorwahl aus den Plugin-Einstellungen ergänzt.",
+      "placeholderRecipient": "+2348030000000",
+      "labelPreview": "Gerenderte Nachricht",
+      "buttonSend": "Test senden",
+      "messageSent": "Testnachricht an {recipient} gesendet.",
+      "errorUnexpected": "Die Testnachricht konnte nicht gesendet werden.",
+      "error": {
+        "templateNotFound": "Diese Vorlage existiert nicht mehr. Speichere sie zuerst und versuche es erneut.",
+        "templateEmpty": "Diese Vorlage hat keinen Nachrichtentext für die gewählte Sprache.",
+        "renderFailed": "Die Vorlage konnte nicht gerendert werden. Prüfe die Twig-Platzhalter im Nachrichtentext.",
+        "invalidRecipient": "Diese Telefonnummer ist nicht verwendbar. Nutze das internationale Format, zum Beispiel +2348030000000.",
+        "providerRejected": "Der Anbieter hat die Nachricht abgelehnt. Prüfe Absender-ID und Zugangsdaten in den Plugin-Einstellungen.",
+        "providerUnavailable": "Der Anbieter ist vorübergehend nicht erreichbar. Versuche es gleich noch einmal.",
+        "missingRecipient": "Gib vor dem Senden eine Telefonnummer ein.",
+        "errorUnexpected": "Die Testnachricht konnte nicht gesendet werden.",
+        "noProviderConfigured": "Für diesen Kanal ist noch kein Anbieter konfiguriert, es wurde nichts gesendet. Richte einen in den Plugin-Einstellungen ein."
+      }
+    },
+    "flowAction": {
+      "label": "SMS senden",
+      "description": "Sendet die ausgewählte SMS-Vorlage an die Mobilnummer des Kunden.",
+      "modal": {
+        "title": "SMS senden",
+        "hint": "Sendet die ausgewählte Vorlage an den Kunden dieses Flows. Hat der Kunde keine verwendbare Mobilnummer, wird die SMS übersprungen und der Rest des Flows – einschließlich der E-Mail – läuft weiter.",
+        "labelTemplate": "SMS-Vorlage",
+        "placeholderTemplate": "SMS-Vorlage auswählen…"
+      }
+    }
+  },
+  "sw-privileges": {
+    "additional_permissions": {
+      "notifications": {
+        "label": "SMS for Shopware 6",
+        "manage": "Manage"
+      }
+    }
+  }
+}

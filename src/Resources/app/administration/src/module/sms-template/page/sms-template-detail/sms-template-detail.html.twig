@@ -1,0 +1,196 @@
+{% block kommandhub_sms_template_detail %}
+<sw-page class="kommandhub-sms-template-detail">
+
+    {% block kommandhub_sms_template_detail_header %}
+    <template #smart-bar-header>
+        <h2 v-if="smsTemplate && !isNew">{{ identifier || $tc('kommandhub-sms-template.detail.textHeadline') }}</h2>
+        <h2 v-else>{{ $tc('kommandhub-sms-template.detail.textHeadlineNew') }}</h2>
+    </template>
+    {% endblock %}
+
+    {% block kommandhub_sms_template_detail_language_switch %}
+    <template #language-switch>
+        <sw-language-switch
+            :disabled="isNew"
+            @on-change="onChangeLanguage"
+        />
+    </template>
+    {% endblock %}
+
+    {% block kommandhub_sms_template_detail_actions %}
+    <template #smart-bar-actions>
+        {# Disabled until the record exists and has a body: the server would
+           refuse either case, and a disabled button with a reason is kinder
+           than a round trip that fails. #}
+        {% block kommandhub_sms_template_detail_test_action %}
+        <sw-button
+            v-tooltip="tooltipTest"
+            class="mt-button mt-button--secondary mt-button--default kommandhub-sms-template-detail__test-action"
+            :disabled="!canSendTest"
+            @click="onOpenTestModal"
+        >
+            {{ $t('kommandhub-sms.testMessage.title') }}
+        </sw-button>
+        {% endblock %}
+
+        <sw-button
+            class="mt-button mt-button--secondary mt-button--default kommandhub-sms-template-detail__cancel-action"
+            :disabled="isLoading"
+            @click="onCancel"
+        >
+            {{ $tc('global.default.cancel') }}
+        </sw-button>
+
+        <sw-button-process
+            v-tooltip="tooltipSave"
+            class="kommandhub-sms-template-detail__save-action"
+            variant="primary"
+            :is-loading="isLoading"
+            :process-success="isSaveSuccessful"
+            :disabled="isLoading || !allowSave"
+            @process-finish="saveFinish"
+            @click="onSave"
+        >
+            {{ $tc('global.default.save') }}
+        </sw-button-process>
+    </template>
+    {% endblock %}
+
+    {% block kommandhub_sms_template_detail_content %}
+    <template #content>
+        <sw-card-view>
+
+            {% block kommandhub_sms_template_detail_language_info %}
+            <sw-language-info :entity-description="identifier" />
+            {% endblock %}
+
+            {% block kommandhub_sms_template_detail_card %}
+            <sw-card
+                v-if="smsTemplate"
+                :title="$tc('kommandhub-sms-template.detail.cardTitleSettings')"
+                :is-loading="isLoading"
+            >
+
+                {% block kommandhub_sms_template_detail_field_event %}
+                <sw-entity-single-select
+                    v-model:value="smsTemplate.mailTemplateTypeId"
+                    class="kommandhub-sms-template-detail__event"
+                    entity="mail_template_type"
+                    label-property="name"
+                    required
+                    :criteria="mailTemplateTypeCriteria"
+                    :label="$tc('kommandhub-sms-template.detail.labelEvent')"
+                    :help-text="$tc('kommandhub-sms-template.detail.helpTextEvent')"
+                    :placeholder="$tc('kommandhub-sms-template.detail.placeholderEvent')"
+                    :disabled="!allowSave"
+                />
+                {% endblock %}
+
+                {% block kommandhub_sms_template_detail_field_name %}
+                <sw-text-field
+                    v-model:value="smsTemplate.name"
+                    class="kommandhub-sms-template-detail__name"
+                    required
+                    :label="$tc('kommandhub-sms-template.detail.labelName')"
+                    :help-text="$tc('kommandhub-sms-template.detail.helpTextName')"
+                    :disabled="!allowSave"
+                />
+                {% endblock %}
+
+                {% block kommandhub_sms_template_detail_field_sender_id %}
+                <sw-text-field
+                    v-model:value="smsTemplate.senderId"
+                    class="kommandhub-sms-template-detail__sender-id"
+                    :label="$tc('kommandhub-sms-template.detail.labelSenderId')"
+                    :help-text="$tc('kommandhub-sms-template.detail.helpTextSenderId')"
+                    :placeholder="$tc('kommandhub-sms-template.detail.placeholderSenderId')"
+                    :disabled="!allowSave"
+                />
+                {% endblock %}
+
+                {% block kommandhub_sms_template_detail_field_active %}
+                <sw-switch-field
+                    v-model:value="smsTemplate.active"
+                    class="kommandhub-sms-template-detail__active"
+                    :label="$tc('kommandhub-sms-template.detail.labelActive')"
+                    :disabled="!allowSave"
+                />
+                {% endblock %}
+
+            </sw-card>
+            {% endblock %}
+
+            {% block kommandhub_sms_template_detail_content_card %}
+            <sw-card
+                v-if="smsTemplate"
+                :title="$tc('kommandhub-sms-template.detail.cardTitleContent')"
+                :is-loading="isLoading"
+            >
+
+                {% block kommandhub_sms_template_detail_field_content %}
+                {# mt-textarea, not sw-textarea-field: the latter is a
+                   deprecated wrapper around this component whose two-way
+                   binding does not survive the round trip, so the typed text
+                   never reaches the entity. Core's own modules bind mt-textarea
+                   with a plain v-model, which is what works. #}
+                <mt-textarea
+                    v-model="smsTemplate.content"
+                    class="kommandhub-sms-template-detail__content"
+                    required
+                    :label="$tc('kommandhub-sms-template.detail.labelContent')"
+                    :help-text="$tc('kommandhub-sms-template.detail.helpTextContent')"
+                    :placeholder="$tc('kommandhub-sms-template.detail.placeholderContent')"
+                    :disabled="!allowSave"
+                />
+                {% endblock %}
+
+                {# Plain markup on purpose. This block previously used sw-alert
+                   (a deprecated wrapper around mt-banner) and $tc with a
+                   numeric choice argument; a render failure in either takes the
+                   whole card down with it, including the textarea above. The
+                   counter is decoration — it must not be able to hide the one
+                   field the merchant has to fill in. #}
+                {% block kommandhub_sms_template_detail_segment_counter %}
+                <div
+                    class="kommandhub-sms-template-detail__counter"
+                    :class="'kommandhub-sms-template-detail__counter--' + segmentVariant"
+                >
+                    <span class="kommandhub-sms-template-detail__counter-item">
+                        {{ $t('kommandhub-sms-template.detail.counterCharacters', { count: segmentInfo.characters }) }}
+                    </span>
+                    <span class="kommandhub-sms-template-detail__counter-item">
+                        {{ $t('kommandhub-sms-template.detail.counterEncoding', { encoding: segmentInfo.encoding }) }}
+                    </span>
+                    <span class="kommandhub-sms-template-detail__counter-item">
+                        {{ $t('kommandhub-sms-template.detail.counterSegments', { count: segmentInfo.segments }) }}
+                    </span>
+                    <span class="kommandhub-sms-template-detail__counter-item">
+                        {{ $t('kommandhub-sms-template.detail.counterRemaining', { count: segmentInfo.remaining }) }}
+                    </span>
+                </div>
+
+                <p
+                    v-if="segmentInfo.encoding === 'UCS-2'"
+                    class="kommandhub-sms-template-detail__counter-hint"
+                >
+                    {{ $t('kommandhub-sms-template.detail.counterUnicodeHint') }}
+                </p>
+                {% endblock %}
+
+            </sw-card>
+            {% endblock %}
+
+        </sw-card-view>
+
+        {% block kommandhub_sms_template_detail_test_modal %}
+        <kommandhub-test-message-modal
+            v-if="showTestModal"
+            :template-id="templateId"
+            @modal-close="onCloseTestModal"
+        />
+        {% endblock %}
+    </template>
+    {% endblock %}
+
+</sw-page>
+{% endblock %}

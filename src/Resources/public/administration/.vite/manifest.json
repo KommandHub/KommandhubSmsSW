@@ -1,0 +1,11 @@
+{
+  "main.js": {
+    "file": "assets/kommandhub-sms-s-w-BCVKjIWD.js",
+    "name": "kommandhub-sms-s-w",
+    "src": "main.js",
+    "isEntry": true,
+    "css": [
+      "assets/kommandhub-sms-s-w-omfAZP90.css"
+    ]
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "kommandhub-sms-template": {
+    "general": {
+      "mainMenuItemGeneral": "SMS templates",
+      "descriptionTextModule": "Notifications: the SMS a shopper receives for each order event"
+    },
+    "list": {
+      "columnEvent": "Event",
+      "columnSenderId": "Sender ID",
+      "columnUpdatedAt": "Last modified",
+      "buttonCreate": "Add SMS template",
+      "searchPlaceholder": "Search SMS templates…",
+      "eventMissing": "No event assigned",
+      "senderIdInherited": "From provider settings",
+      "emptyStateTitle": "No SMS templates yet",
+      "emptyStateSubline": "Add a template to send an SMS alongside the email Shopware already sends for an event.",
+      "messageLoadError": "The SMS templates could not be loaded.",
+      "messageDeleteSuccess": "The SMS template has been deleted.",
+      "messageDeleteError": "The SMS template could not be deleted."
+    },
+    "detail": {
+      "textHeadline": "SMS template",
+      "textHeadlineNew": "New SMS template",
+      "cardTitleSettings": "Settings",
+      "cardTitleContent": "Message",
+      "labelEvent": "Event",
+      "helpTextEvent": "The Shopware event this SMS belongs to. It is sent alongside the email for the same event.",
+      "placeholderEvent": "Select an event…",
+      "labelName": "Internal name",
+      "helpTextName": "Shown in the template list only. Never sent to the shopper.",
+      "labelSenderId": "Sender ID",
+      "helpTextSenderId": "Overrides the sender configured on the provider, for this template only. Must be approved with the provider.",
+      "placeholderSenderId": "Leave empty to use the provider setting",
+      "labelActive": "Active",
+      "labelContent": "Message text",
+      "helpTextContent": "Twig is supported, for example {'{{'} order.orderNumber {'}}'}. Keep it short — every 160 characters is a separate billed message.",
+      "placeholderContent": "Hi {'{{'} customer.firstName {'}}'}, your order {'{{'} order.orderNumber {'}}'} has shipped.",
+      "counterCharacters": "{count} characters",
+      "counterEncoding": "Encoding: {encoding}",
+      "counterSegments": "Segments: {count}",
+      "counterRemaining": "{count} remaining in this segment",
+      "counterUnicodeHint": "This message contains a character outside the GSM alphabet — often a curly quote, an emoji or an accented letter — so it is sent as Unicode and each segment holds only 70 characters instead of 160.",
+      "messageLoadError": "The SMS template could not be loaded.",
+      "messageSaveSuccess": "The SMS template has been saved.",
+      "messageSaveError": "The SMS template could not be saved.",
+      "messageEventRequired": "Select the event this SMS template belongs to before saving.",
+      "messageNameRequired": "Enter an internal name before saving.",
+      "messageContentRequired": "Enter the message text before saving.",
+      "tooltipTestSaved": "Sends the saved version of this template. Save first if you have unsaved changes.",
+      "tooltipTestUnsaved": "Save the template before sending a test message.",
+      "tooltipTestNoContent": "Add message text before sending a test message."
+    }
+  }
+}

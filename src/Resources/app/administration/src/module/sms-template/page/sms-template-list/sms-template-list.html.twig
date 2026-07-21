@@ -1,0 +1,99 @@
+{% block kommandhub_sms_template_list %}
+<sw-page class="kommandhub-sms-template-list">
+
+    {% block kommandhub_sms_template_list_search_bar %}
+    <template #search-bar>
+        <sw-search-bar
+            initial-search-type="kommandhub_sms_template"
+            :placeholder="$tc('kommandhub-sms-template.list.searchPlaceholder')"
+            :initial-search="term"
+            @search="onSearch"
+        />
+    </template>
+    {% endblock %}
+
+    {% block kommandhub_sms_template_list_smart_bar_header %}
+    <template #smart-bar-header>
+        <h2>
+            {{ $tc('kommandhub-sms-template.general.mainMenuItemGeneral') }}
+            <span v-if="!isLoading" class="sw-page__smart-bar-amount">({{ total }})</span>
+        </h2>
+    </template>
+    {% endblock %}
+
+    {% block kommandhub_sms_template_list_smart_bar_actions %}
+    <template #smart-bar-actions>
+        <sw-button
+            v-tooltip="{
+                message: $tc('sw-privileges.tooltip.warning'),
+                disabled: acl.can('sms.manage'),
+                showOnDisabledElements: true
+            }"
+            class="kommandhub-sms-template-list__create-action"
+            variant="primary"
+            :disabled="!acl.can('sms.manage')"
+            :router-link="{ name: 'kommandhub.sms.template.create' }"
+        >
+            {{ $tc('kommandhub-sms-template.list.buttonCreate') }}
+        </sw-button>
+    </template>
+    {% endblock %}
+
+    {% block kommandhub_sms_template_list_content %}
+    <template #content>
+        <div class="kommandhub-sms-template-list__content">
+
+            {% block kommandhub_sms_template_list_grid %}
+            <sw-entity-listing
+                v-if="templates"
+                class="kommandhub-sms-template-list__grid"
+                detail-route="kommandhub.sms.template.detail"
+                :items="templates"
+                :repository="repository"
+                :columns="columns"
+                :is-loading="isLoading"
+                :allow-inline-edit="false"
+                :allow-edit="acl.can('sms.manage')"
+                :allow-delete="acl.can('sms.manage')"
+                :sort-by="sortBy"
+                :sort-direction="sortDirection"
+                @delete-item-finish="onDeleteSuccess"
+                @delete-item-failed="onDeleteError"
+                @column-sort="onSortColumn"
+                @page-change="onPageChange"
+            >
+
+                {% block kommandhub_sms_template_list_grid_column_event %}
+                <template #column-mailTemplateType.name="{ item }">
+                    <router-link :to="{ name: 'kommandhub.sms.template.detail', params: { id: item.id } }">
+                        {{ item.mailTemplateType ? item.mailTemplateType.name : $tc('kommandhub-sms-template.list.eventMissing') }}
+                    </router-link>
+                </template>
+                {% endblock %}
+
+                {% block kommandhub_sms_template_list_grid_column_sender_id %}
+                <template #column-senderId="{ item }">
+                    <span v-if="item.senderId">{{ item.senderId }}</span>
+                    <span v-else class="kommandhub-sms-template-list__inherited">
+                        {{ $tc('kommandhub-sms-template.list.senderIdInherited') }}
+                    </span>
+                </template>
+                {% endblock %}
+
+            </sw-entity-listing>
+            {% endblock %}
+
+            {% block kommandhub_sms_template_list_empty_state %}
+            <sw-empty-state
+                v-if="!isLoading && total === 0"
+                :title="$tc('kommandhub-sms-template.list.emptyStateTitle')"
+                :subline="$tc('kommandhub-sms-template.list.emptyStateSubline')"
+            />
+            {% endblock %}
+
+        </div>
+    </template>
+    {% endblock %}
+
+</sw-page>
+{% endblock %}

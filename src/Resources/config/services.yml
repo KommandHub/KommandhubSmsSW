@@ -1,0 +1,92 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+    # Give this plugin's services the ConfigurableLogger wherever they type-hint
+    # PSR-3, without touching the container-wide Psr\Log\LoggerInterface alias.
+    #
+    # Aliasing that globally rebinds LoggerInterface for *every* autowired
+    # consumer in the installation, including Shopware core and other plugins.
+    # Two plugins doing it means the last one compiled wins, so sibling plugins
+    # would silently log through each other's logger and each other's debug
+    # toggle. A bind is scoped to the services defined in this file, so it
+    # cannot collide.
+    bind:
+      Psr\Log\LoggerInterface $logger: '@Kommandhub\SmsSW\Logging\ConfigurableLogger'
+      # Shopware autowires DAL repositories by argument-name convention only —
+      # `$kommandhubSmsTemplateRepository` for entity `kommandhub_sms_template`.
+      # Our services call it `$templateRepository`, which reads better at the
+      # call sites, so the mapping lives here instead of in every class name.
+      Shopware\Core\Framework\DataAbstractionLayer\EntityRepository $templateRepository: '@kommandhub_sms_template.repository'
+
+  # Every provider is tagged by virtue of implementing the contract, so a new
+  # provider is picked up by the resource glob below and reaches the registry
+  # without any edit here or anywhere else. Which channels it serves is its own
+  # declaration, not something this wiring decides.
+  _instanceof:
+    Kommandhub\SmsSW\Notification\Provider\NotificationProviderInterface:
+      tags: ['sms.provider']
+
+  Kommandhub\SmsSW\:
+    resource: '../../*'
+    exclude: '../../{DependencyInjection,Entity,Migration,Tests,Kernel.php}'
+
+  # The explicit $logger argument overrides the bind above, so the wrapper
+  # decorates the real monolog channel instead of recursing into itself.
+  Kommandhub\SmsSW\Logging\ConfigurableLogger:
+    arguments:
+      $logger: '@monolog.logger.kommandhub_sms_channel'
+    tags:
+      - { name: 'monolog.logger', channel: 'kommandhub_sms_channel' }
+
+  Kommandhub\SmsSW\Notification\Provider\NotificationProviderRegistry:
+    arguments:
+      $providers: !tagged_iterator 'sms.provider'
+
+  Kommandhub\SmsSW\Core\Content\SmsTemplate\SmsTemplateDefinition:
+    tags:
+      - { name: 'shopware.entity.definition', entity: 'kommandhub_sms_template' }
+
+  Kommandhub\SmsSW\Core\Content\SmsTemplate\Aggregate\SmsTemplateTranslation\SmsTemplateTranslationDefinition:
+    tags:
+      - { name: 'shopware.entity.definition', entity: 'kommandhub_sms_template_translation' }
+
+
+
+  # Provider-agnostic: the routing gateway asks the selector which providers may
+  # carry each message. Adding a provider never touches this alias.
+  Kommandhub\SmsSW\Notification\Gateway\NotificationGatewayInterface:
+    alias: Kommandhub\SmsSW\Notification\Gateway\RoutingNotificationGateway
+
+  Kommandhub\SmsSW\MessageQueue\Handler\SendSmsHandler:
+    arguments:
+      $cache: '@cache.object'
+
+  # $templateRepository comes from the bind above.
+  #
+  # The `key` is not optional: FlowExecutor's action collection is indexed by
+  # this tag attribute (tagged_iterator index-by="key"), and a sequence whose
+  # actionName is missing from that index is skipped silently — the flow "runs"
+  # and nothing happens. It must equal SendSmsAction::getName().
+  Kommandhub\SmsSW\Flow\Action\SendSmsAction:
+    tags:
+      - { name: 'flow.action', priority: 500, key: 'action.kommandhub.send.sms' }
+
+
+  # Do not extend AbstractController, so they are not auto-tagged.
+  Kommandhub\SmsSW\Administration\Controller\NotificationProviderController:
+    public: true
+    tags:
+      - { name: 'controller.service_arguments' }
+
+  Kommandhub\SmsSW\Administration\Controller\TestMessageController:
+    public: true
+    tags:
+      - { name: 'controller.service_arguments' }
+
+  Kommandhub\SmsSW\Webhook\Controller\WebhookController:
+    public: true
+    calls:
+      - [setContainer, ['@service_container']]
+

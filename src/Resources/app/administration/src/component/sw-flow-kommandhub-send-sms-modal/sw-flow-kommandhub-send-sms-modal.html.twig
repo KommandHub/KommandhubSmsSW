@@ -1,0 +1,51 @@
+{% block sw_flow_kommandhub_send_sms_modal %}
+<sw-modal
+    class="sw-flow-kommandhub-send-sms-modal"
+    :title="$tc('kommandhub-sms.flowAction.modal.title')"
+    :closable="false"
+    @modal-close="onClose"
+>
+
+    {% block sw_flow_kommandhub_send_sms_modal_content %}
+    <p class="sw-flow-kommandhub-send-sms-modal__hint">
+        {{ $tc('kommandhub-sms.flowAction.modal.hint') }}
+    </p>
+
+    <sw-entity-single-select
+        v-model:value="templateId"
+        name="sw-field--templateId"
+        class="sw-flow-kommandhub-send-sms-modal__template"
+        entity="kommandhub_sms_template"
+        label-property="name"
+        required
+        :criteria="templateCriteria"
+        :label="$tc('kommandhub-sms.flowAction.modal.labelTemplate')"
+        :placeholder="$tc('kommandhub-sms.flowAction.modal.placeholderTemplate')"
+        :error="templateError"
+    />
+    {% endblock %}
+
+    {% block sw_flow_kommandhub_send_sms_modal_footer %}
+    <template #modal-footer>
+        <mt-button
+            class="sw-flow-kommandhub-send-sms-modal__cancel-button"
+            size="small"
+            variant="secondary"
+            @click="onClose"
+        >
+            {{ $tc('global.default.cancel') }}
+        </mt-button>
+
+        <mt-button
+            class="sw-flow-kommandhub-send-sms-modal__save-button"
+            variant="primary"
+            size="small"
+            @click="onSave"
+        >
+            {{ $tc('sw-flow.modals.buttonSaveAction') }}
+        </mt-button>
+    </template>
+    {% endblock %}
+
+</sw-modal>
+{% endblock %}

@@ -1,0 +1,11 @@
+{
+  "kommandhub-sms": {
+    "title": "SMS pour Shopware 6"
+  },
+  "checkout": {
+    "notificationsConfigurationError": "This payment method is not configured correctly. Please contact the shop owner."
+  },
+  "error": {
+    "notificationsConfigurationError": "This payment method is not configured correctly. Please contact the shop owner."
+  }
+}

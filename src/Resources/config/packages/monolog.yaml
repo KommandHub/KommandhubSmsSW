@@ -1,0 +1,12 @@
+# Dedicated log channel so this plugin's output is separable from Shopware's.
+# ConfigurableLogger decorates monolog.logger.kommandhub_sms_channel (see services.yml)
+# and gates what actually reaches this handler on the plugin's debug settings.
+monolog:
+  channels: ['kommandhub_sms_channel']
+
+  handlers:
+    notificationsLogHandler:
+      max_files: 7
+      type: rotating_file
+      path: "%kernel.logs_dir%/kommandhub_sms_%kernel.environment%.log"
+      channels: ["kommandhub_sms_channel"]

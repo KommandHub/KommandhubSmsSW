@@ -1,0 +1,13 @@
+{
+  "kommandhub-sms": {
+    "title": "SMS for Shopware 6"
+  },
+  "sw-privileges": {
+    "additional_permissions": {
+      "notifications": {
+        "label": "SMS for Shopware 6",
+        "manage": "Manage"
+      }
+    }
+  }
+}

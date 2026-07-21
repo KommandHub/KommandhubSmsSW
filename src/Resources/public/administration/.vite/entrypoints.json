@@ -1,0 +1,25 @@
+{
+  "base": "/bundles/kommandhubsmssw/administration/",
+  "entryPoints": {
+    "kommandhub-sms-s-w": {
+      "css": [
+        "/bundles/kommandhubsmssw/administration/assets/kommandhub-sms-s-w-omfAZP90.css"
+      ],
+      "dynamic": [],
+      "js": [
+        "/bundles/kommandhubsmssw/administration/assets/kommandhub-sms-s-w-BCVKjIWD.js"
+      ],
+      "legacy": false,
+      "preload": []
+    }
+  },
+  "legacy": false,
+  "metadatas": {},
+  "version": [
+    "7.1.0",
+    7,
+    1,
+    0
+  ],
+  "viteServer": null
+}
