@@ -128,7 +128,6 @@ class AfricasTalkingProviderTest extends ProviderTestCase
         $this->assertStringStartsWith('https://api.sandbox.africastalking.com', (string)$this->capturedUrl);
     }
 
-
     public function testItClaimsEastAfricanDestinations(): void
     {
         $provider = $this->provider($this->client([]));
@@ -147,6 +146,41 @@ class AfricasTalkingProviderTest extends ProviderTestCase
         $this->assertStringContainsString('KES 1785.50', $check->getMessage());
     }
 
+    public function testVerifyCredentialsRejectsError(): void
+    {
+        $provider = $this->provider($this->client(['message' => 'Unauthorized'], 401));
+        $check = $provider->verifyCredentials();
+        $this->assertFalse($check->isValid());
+        $this->assertStringContainsString('Unauthorized', $check->getDetail());
+    }
+
+    public function testVerifyCredentialsRejectsMissingBalance(): void
+    {
+        $provider = $this->provider($this->client(['UserData' => []]));
+        $check = $provider->verifyCredentials();
+        $this->assertFalse($check->isValid());
+        $this->assertStringContainsString('did not return account data', $check->getMessage());
+    }
+
+    public function testSendThrowsWhenSettingMissing(): void
+    {
+        $provider = $this->provider($this->client([]), [
+            'africasTalkingUsername' => '',
+            'africasTalkingApiKey' => 'key',
+        ]);
+        $this->expectException(PermanentProviderException::class);
+        $provider->send(new MessageRequest('254', 'body'));
+    }
+
+    public function testExtractMessageIdHandlesMissingKeys(): void
+    {
+        $provider = $this->provider($this->client(self::envelope([
+            ['statusCode' => 101, 'status' => 'Success'], // missing messageId
+        ])));
+        $result = $provider->send(new MessageRequest('254', 'body'));
+        $this->assertNull($result->getMessageId());
+    }
+
     public function testVerifyCredentialsNeedsBothFields(): void
     {
         $check = $this->provider($this->client([]), ['africasTalkingApiKey' => 'atsk-1'])->verifyCredentials();
@@ -157,6 +191,46 @@ class AfricasTalkingProviderTest extends ProviderTestCase
     /**
      * @param array<string, string>|null $settings
      */
+    public function testGetLabel(): void
+    {
+        $this->assertSame("Africa's Talking", $this->provider($this->client([]))->getLabel());
+    }
+
+    public function testIsConfiguredNeedsUsernameAndApiKey(): void
+    {
+        $client = $this->client([]);
+
+        $this->assertTrue($this->provider($client)->isConfigured());
+        $this->assertFalse($this->provider($client, ['africasTalkingApiKey' => 'atsk-1'])->isConfigured());
+        $this->assertFalse($this->provider($client, ['africasTalkingUsername' => 'kommandhub'])->isConfigured());
+    }
+
+    public function testInvalidRecipientEntryIsPermanent(): void
+    {
+        $provider = $this->provider($this->client(self::envelope(['not an array'])));
+
+        $this->expectException(PermanentProviderException::class);
+        $this->expectExceptionMessage('invalid recipient entry');
+
+        $provider->send(new MessageRequest('254700000000', 'body'));
+    }
+
+    /**
+     * A refused recipient whose entry carries no readable status still fails
+     * permanently, with a placeholder reason rather than a blank one.
+     */
+    public function testARefusedRecipientWithoutAStatusStringSaysNoReason(): void
+    {
+        $provider = $this->provider($this->client(self::envelope([
+            ['statusCode' => 403, 'messageId' => 'None'],
+        ])));
+
+        $this->expectException(PermanentProviderException::class);
+        $this->expectExceptionMessage('no reason given');
+
+        $provider->send(new MessageRequest('254700000000', 'body'));
+    }
+
     private function provider(MockHttpClient $client, ?array $settings = null): AfricasTalkingProvider
     {
         return new AfricasTalkingProvider($client, $this->config($settings ?? self::SETTINGS), new NullLogger());

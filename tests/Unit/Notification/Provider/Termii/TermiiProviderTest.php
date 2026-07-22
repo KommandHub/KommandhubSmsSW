@@ -9,6 +9,7 @@ use Kommandhub\SmsSW\Exception\TransientProviderException;
 use Kommandhub\SmsSW\Notification\Provider\Struct\MessageRequest;
 use Kommandhub\SmsSW\Notification\Provider\Termii\TermiiProvider;
 use Kommandhub\SmsSW\Tests\Unit\Notification\Provider\ProviderTestCase;
+use Symfony\Component\HttpClient\Response\MockResponse;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpClient\MockHttpClient;
 
@@ -97,8 +98,6 @@ class TermiiProviderTest extends ProviderTestCase
         $this->assertFalse($this->provider($client, ['termiiSenderId' => 'Kommandhub'])->isConfigured());
     }
 
-
-
     public function testTheSmsChannelUsesTheConfiguredRoute(): void
     {
         $provider = $this->provider(
@@ -157,6 +156,39 @@ class TermiiProviderTest extends ProviderTestCase
         $this->assertStringContainsString('1200', $check->getMessage());
     }
 
+    public function testVerifyCredentialsRejectsEmptyKey(): void
+    {
+        $provider = $this->provider($this->client([]), ['termiiApiKey' => '']);
+        $this->assertFalse($provider->verifyCredentials()->isValid());
+    }
+
+    public function testVerifyCredentialsRejectsMissingBalance(): void
+    {
+        $provider = $this->provider($this->client(['message' => 'ok']));
+        $this->assertFalse($provider->verifyCredentials()->isValid());
+    }
+
+    public function testVerifyCredentialsRejectsMissingSender(): void
+    {
+        $provider = $this->provider($this->client(['balance' => 10]), [
+            'termiiApiKey' => 'key',
+            'termiiSenderId' => '',
+        ]);
+        $check = $provider->verifyCredentials();
+        $this->assertFalse($check->isValid());
+        $this->assertStringContainsString('no sender ID', $check->getMessage());
+    }
+
+    public function testSendThrowsWhenSettingMissing(): void
+    {
+        $provider = $this->provider($this->client([]), [
+            'termiiApiKey' => '',
+            'termiiSenderId' => 'SENDER',
+        ]);
+        $this->expectException(PermanentProviderException::class);
+        $provider->send(new MessageRequest('234', 'body'));
+    }
+
     public function testVerifyCredentialsReportsRejection(): void
     {
         $provider = $this->provider($this->client(['message' => 'Invalid API key'], 401));
@@ -170,6 +202,35 @@ class TermiiProviderTest extends ProviderTestCase
     /**
      * @param array<string, string>|null $settings
      */
+    public function testGetLabel(): void
+    {
+        $this->assertSame('Termii', $this->provider($this->client([]))->getLabel());
+    }
+
+    public function testSendExposesTheRawProviderResponse(): void
+    {
+        $decoded = ['message_id' => 'msg-1', 'note' => 'kept for logging'];
+
+        $result = $this->provider($this->client($decoded))->send(new MessageRequest('2348030000000', 'body'));
+
+        $this->assertSame($decoded, $result->getRaw());
+    }
+
+    /**
+     * A transport-level failure — DNS, TLS, timeout — never reaches the
+     * provider and is retryable, so the shared HTTP base turns it into a
+     * TransientProviderException.
+     */
+    public function testATransportFailureIsTransient(): void
+    {
+        $client = new MockHttpClient(static fn (): MockResponse => new MockResponse('', ['error' => 'Connection timed out']));
+
+        $this->expectException(TransientProviderException::class);
+
+        (new TermiiProvider($client, $this->config(self::SETTINGS), new NullLogger()))
+            ->send(new MessageRequest('2348030000000', 'body'));
+    }
+
     private function provider(MockHttpClient $client, ?array $settings = null): TermiiProvider
     {
         return new TermiiProvider($client, $this->config($settings ?? self::SETTINGS), new NullLogger());

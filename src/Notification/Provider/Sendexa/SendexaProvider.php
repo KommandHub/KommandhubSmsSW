@@ -112,7 +112,8 @@ class SendexaProvider extends AbstractHttpNotificationProvider
             );
         }
 
-        $messageId = $decoded['data']['messageId'] ?? null;
+        $data = $decoded['data'] ?? null;
+        $messageId = \is_array($data) ? ($data['messageId'] ?? null) : null;
 
         return new MessageResult($this->getName(), \is_string($messageId) ? $messageId : null, $decoded);
     }
@@ -140,7 +141,8 @@ class SendexaProvider extends AbstractHttpNotificationProvider
 
         // The balance endpoint's exact payload is undocumented, so report a
         // figure when one is recognisable and stay quiet rather than wrong.
-        $balance = $decoded['data']['balance'] ?? $decoded['balance'] ?? null;
+        $data = $decoded['data'] ?? null;
+        $balance = \is_array($data) ? ($data['balance'] ?? ($decoded['balance'] ?? null)) : ($decoded['balance'] ?? null);
 
         return CredentialCheck::valid(
             \is_scalar($balance)

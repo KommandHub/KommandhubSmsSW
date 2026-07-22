@@ -106,11 +106,13 @@ class TermiiProvider extends AbstractHttpNotificationProvider
             return CredentialCheck::invalid('Termii did not return a balance.', $this->describe($decoded));
         }
 
+        $balance = $decoded['balance'];
+
         if ($this->setting('senderId', $salesChannelId) === '') {
             return CredentialCheck::invalid('API key works, but no sender ID is configured.');
         }
 
-        return CredentialCheck::valid(sprintf('Termii credentials accepted. Balance: %s', (string)$decoded['balance']));
+        return CredentialCheck::valid(sprintf('Termii credentials accepted. Balance: %s', \is_scalar($balance) ? (string)$balance : 'unknown'));
     }
 
     /**

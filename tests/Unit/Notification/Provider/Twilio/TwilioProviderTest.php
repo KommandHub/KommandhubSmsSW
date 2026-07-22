@@ -116,7 +116,6 @@ class TwilioProviderTest extends ProviderTestCase
      * The global fallback claims every destination, so the regional providers
      * win on their own turf only by being preferred, never by exclusion.
      */
-
     public function testItClaimsEveryDestination(): void
     {
         $provider = $this->provider($this->client([]));
@@ -142,9 +141,77 @@ class TwilioProviderTest extends ProviderTestCase
         $this->assertStringContainsString('suspended', $check->getMessage());
     }
 
+    public function testVerifyCredentialsRejectsClosedAccount(): void
+    {
+        $provider = $this->provider($this->client(['status' => 'closed']));
+        $this->assertFalse($provider->verifyCredentials()->isValid());
+    }
+
+    public function testVerifyCredentialsRejectsMissingSender(): void
+    {
+        $provider = $this->provider($this->client(['status' => 'active']), [
+            'twilioAccountSid' => 'AC123',
+            'twilioAuthToken' => 'token-1',
+        ]);
+        $check = $provider->verifyCredentials();
+        $this->assertFalse($check->isValid());
+        $this->assertStringContainsString('no sending number', $check->getMessage());
+    }
+
+    public function testVerifyCredentialsRejectsEmptySid(): void
+    {
+        $provider = $this->provider($this->client([]), [
+            'twilioAccountSid' => '',
+            'twilioAuthToken' => 'token-1',
+        ]);
+        $check = $provider->verifyCredentials();
+        $this->assertFalse($check->isValid());
+    }
+
+    public function testVerifyCredentialsRejectsApiError(): void
+    {
+        $provider = $this->provider($this->client(['message' => 'Unauthorized'], 401));
+        $check = $provider->verifyCredentials();
+        $this->assertFalse($check->isValid());
+        $this->assertStringContainsString('Unauthorized', $check->getDetail());
+    }
+
+    public function testSendThrowsWhenSettingMissingAtRuntime(): void
+    {
+        $provider = $this->provider($this->client([]), [
+            'twilioAccountSid' => '',
+            'twilioAuthToken' => 'token-1',
+            'twilioFrom' => '+1500',
+        ]);
+
+        $this->expectException(PermanentProviderException::class);
+        $this->expectExceptionMessage('missing the "accountSid"');
+
+        $provider->send(new MessageRequest('1555', 'body'));
+    }
+
+    public function testSendThrowsWhenSenderMissingAtRuntime(): void
+    {
+        $provider = $this->provider($this->client([]), [
+            'twilioAccountSid' => 'AC123',
+            'twilioAuthToken' => 'token-1',
+            'twilioFrom' => '',
+        ]);
+
+        $this->expectException(PermanentProviderException::class);
+        $this->expectExceptionMessage('needs either a sending number');
+
+        $provider->send(new MessageRequest('1555', 'body'));
+    }
+
     /**
      * @param array<string, string>|null $settings
      */
+    public function testGetLabel(): void
+    {
+        $this->assertSame('Twilio', $this->provider($this->client([]))->getLabel());
+    }
+
     private function provider(MockHttpClient $client, ?array $settings = null): TwilioProvider
     {
         return new TwilioProvider($client, $this->config($settings ?? self::SETTINGS), new NullLogger());

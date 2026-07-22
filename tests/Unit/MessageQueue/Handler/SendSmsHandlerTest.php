@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kommandhub\SmsSW\Tests\Unit\MessageQueue\Handler;
 
 use Kommandhub\SmsSW\Exception\SmsException;
+use Kommandhub\SmsSW\Exception\TransientProviderException;
 use Kommandhub\SmsSW\MessageQueue\Handler\SendSmsHandler;
 use Kommandhub\SmsSW\MessageQueue\Message\SendSmsMessage;
 use Kommandhub\SmsSW\Notification\Gateway\NotificationGatewayInterface;
@@ -72,6 +73,32 @@ class SendSmsHandlerTest extends TestCase
         ($this->handler)($this->message());
 
         $this->expectNotToPerformAssertions();
+    }
+
+    public function testTransientFailureIsRethrownAfterReleasingKey(): void
+    {
+        $this->gateway->expects($this->exactly(2))
+            ->method('send')
+            ->willReturnCallback(function () {
+                static $count = 0;
+
+                if ($count++ === 0) {
+                    throw new TransientProviderException('Timeout');
+                }
+
+                return 'msg-success';
+            });
+
+        $message = $this->message('retry-key');
+
+        try {
+            ($this->handler)($message);
+            $this->fail('TransientProviderException should have been rethrown');
+        } catch (TransientProviderException) {
+        }
+
+        // Second attempt should work because the key was released
+        ($this->handler)($message);
     }
 
     private function message(string $dedupeKey = 'key-a'): SendSmsMessage

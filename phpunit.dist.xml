@@ -41,6 +41,7 @@
             <directory>src/Migration</directory>
             <directory>src/Resources</directory>
             <directory>src/DependencyInjection</directory>
+            <directory>src/Core/Content/SmsTemplate</directory>
             <directory>src/Entity</directory>
             <directory>tests</directory>
             <directory>vendor</directory>

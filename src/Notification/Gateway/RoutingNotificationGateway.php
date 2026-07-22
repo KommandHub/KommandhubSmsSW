@@ -80,6 +80,6 @@ class RoutingNotificationGateway implements NotificationGatewayInterface
 
         // Every route was momentarily unavailable. Surface it so the queue
         // retries rather than recording a send that never happened.
-        throw $lastTransient ?? new TransientProviderException('Every provider failed.');
+        throw $lastTransient;
     }
 }

@@ -164,7 +164,6 @@ class SendexaProviderTest extends ProviderTestCase
         $this->assertFalse($provider->supports(new MessageRequest('15005550006', 'body')));
     }
 
-
     public function testVerifyCredentialsUsesTheBalanceEndpoint(): void
     {
         $provider = $this->provider($this->client(['success' => true, 'data' => ['balance' => '250.00']]));
@@ -205,6 +204,40 @@ class SendexaProviderTest extends ProviderTestCase
     /**
      * @param array<string, string>|null $settings
      */
+    public function testGetLabelMarksItBeta(): void
+    {
+        $this->assertSame('Sendexa (beta)', $this->provider($this->client([]))->getLabel());
+    }
+
+    public function testVerifyCredentialsReportsAMissingToken(): void
+    {
+        $check = $this->provider($this->client([]), ['sendexaSenderId' => 'Kommandhub'])->verifyCredentials();
+
+        $this->assertFalse($check->isValid());
+        $this->assertStringContainsString('No Sendexa API token', $check->getMessage());
+    }
+
+    public function testVerifyCredentialsFlagsAWorkingTokenWithNoSender(): void
+    {
+        $check = $this->provider(
+            $this->client(['success' => true, 'data' => ['balance' => '10.00']]),
+            ['sendexaApiToken' => 'ZGFzaGJvYXJkLXRva2Vu'],
+        )->verifyCredentials();
+
+        $this->assertFalse($check->isValid());
+        $this->assertStringContainsString('no sender ID', $check->getMessage());
+    }
+
+    public function testSendWithoutASenderIdIsPermanent(): void
+    {
+        $provider = $this->provider($this->client(self::accepted()), ['sendexaApiToken' => 'ZGFzaGJvYXJkLXRva2Vu']);
+
+        $this->expectException(PermanentProviderException::class);
+        $this->expectExceptionMessage('senderId');
+
+        $provider->send(new MessageRequest('233200000000', 'body'));
+    }
+
     private function provider(MockHttpClient $client, ?array $settings = null): SendexaProvider
     {
         return new SendexaProvider($client, $this->config($settings ?? self::SETTINGS), new NullLogger());

@@ -49,7 +49,6 @@ interface NotificationProviderInterface
      * The routing hook: a provider with direct carrier links in East Africa
      * claims Kenyan and Tanzanian numbers, a global fallback claims everything.
      * Returning false is a preference, not an error — the selector moves on.
-     *
      */
     public function supports(MessageRequest $request): bool;
 
