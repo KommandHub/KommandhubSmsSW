@@ -89,21 +89,39 @@ class TestBootstrapper extends ShopwareTestBootstrapper
     }
 
     /**
-     * Optional fixture loader (disabled by default).
+     * Optional fixture loader.
+     *
+     * The plugin ships no fixtures; `fixture:load` comes from a separate dev
+     * bundle that is not installed here, so calling it unconditionally aborted
+     * every fresh-DB test run with "There are no commands defined in the
+     * 'fixture' namespace". The command's absence is the normal state, not an
+     * error — skip when it is missing so the hook stays available for an install
+     * that does provide fixtures without breaking one that does not.
      */
     private function loadFixtures(): void
     {
         $application = new Application($this->getKernel());
+        $application->setAutoExit(false);
 
-        $application->doRun(
-            new ArrayInput([
-                'command' => 'fixture:load',
-                '--group' => $this->fixtureGroup,
-                '--env' => 'test',
-            ]),
-            $this->getOutput()
-        );
+        // Only run the fixture command when it exists; the rest of this method
+        // is not about fixtures.
+        if ($application->has('fixture:load')) {
+            $application->doRun(
+                new ArrayInput([
+                    'command' => 'fixture:load',
+                    '--group' => $this->fixtureGroup,
+                    '--env' => 'test',
+                ]),
+                $this->getOutput()
+            );
+        }
 
+        // Reboot unconditionally: this runs right after the plugin is installed
+        // and activated in the DB, and the fresh kernel is what actually loads
+        // the plugin's services into the container. Skipping it — as an early
+        // return for the missing fixture command did — leaves integration tests
+        // looking at a container compiled before the plugin existed, so every
+        // plugin service reads as "not found".
         KernelLifecycleManager::bootKernel();
     }
 
@@ -178,10 +196,15 @@ class TestBootstrapper extends ShopwareTestBootstrapper
         $application = new Application($kernel);
 
         foreach ($this->activePlugins as $activePlugin) {
+            // No --reinstall: this path only runs against a freshly created test
+            // database where the plugin has never been installed, so --reinstall
+            // means "uninstall then install", and the uninstall of a
+            // not-installed plugin aborts the install — leaving the plugin
+            // registered but inactive, so its services never load and every
+            // integration test reads as "service not found".
             $args = [
                 'command' => 'plugin:install',
                 '--activate' => true,
-                '--reinstall' => true,
                 'plugins' => [$activePlugin],
             ];
 

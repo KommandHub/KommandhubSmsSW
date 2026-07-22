@@ -40,7 +40,13 @@ services:
     tags:
       - { name: 'monolog.logger', channel: 'kommandhub_sms_channel' }
 
+  # Public so the integration wiring test can fetch it from the container. It is
+  # an internal collection of tagged providers — no vendor secret, no security
+  # surface — and its only production consumers are this plugin's own private
+  # services. `when@test` cannot scope this: Shopware loads plugin service files
+  # with a null-env loader, so env-conditional blocks are silently ignored.
   Kommandhub\SmsSW\Notification\Provider\NotificationProviderRegistry:
+    public: true
     arguments:
       $providers: !tagged_iterator 'sms.provider'
 
@@ -54,10 +60,16 @@ services:
 
 
 
+  # Public for the same integration-test reason as the registry above; the alias
+  # is what the test asserts resolves to RoutingNotificationGateway.
+  Kommandhub\SmsSW\Notification\Gateway\RoutingNotificationGateway:
+    public: true
+
   # Provider-agnostic: the routing gateway asks the selector which providers may
   # carry each message. Adding a provider never touches this alias.
   Kommandhub\SmsSW\Notification\Gateway\NotificationGatewayInterface:
     alias: Kommandhub\SmsSW\Notification\Gateway\RoutingNotificationGateway
+    public: true
 
   Kommandhub\SmsSW\MessageQueue\Handler\SendSmsHandler:
     arguments:
@@ -95,4 +107,3 @@ services:
     public: true
     calls:
       - [setContainer, ['@service_container']]
-
