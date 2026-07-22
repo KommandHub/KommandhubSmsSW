@@ -28,16 +28,21 @@
             <name>defaultSmsProvider</name>
             <label>Default SMS provider</label>
             <label lang="de-DE">Standard-SMS-Anbieter</label>
-            <defaultValue>termii</defaultValue>
             <helpText>
                 Tried first for every message. If it is unavailable, the
                 remaining configured providers are tried in turn, preferring one
                 that covers the destination country. A provider with no
                 credentials is skipped entirely.
+
+                Deliberately unset by default: choosing a default is picking who
+                carries your customers' messages, and that should be an explicit
+                decision rather than one this plugin makes for you. With none
+                chosen, the first configured provider that covers the
+                destination is used.
             </helpText>
             <options>
                 <option><id>termii</id><name>Termii (West Africa)</name></option>
-                <option><id>sendexa</id><name>Sendexa (Ghana)</name></option>
+                <option><id>sendexa</id><name>Sendexa (Ghana, beta)</name></option>
                 <option><id>africasTalking</id><name>Africa's Talking (East Africa)</name></option>
                 <option><id>twilio</id><name>Twilio (international fallback)</name></option>
             </options>
