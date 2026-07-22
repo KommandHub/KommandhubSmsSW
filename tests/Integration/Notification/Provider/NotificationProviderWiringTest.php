@@ -56,7 +56,13 @@ class NotificationProviderWiringTest extends TestCase
         // PROJECT_ROOT is set by the test bootstrapper; requiring the autoloader
         // again returns the already-registered Composer instance.
         $projectRoot = $_SERVER['PROJECT_ROOT'] ?? \dirname(__DIR__, 7);
-        $classLoader = require $projectRoot . '/vendor/autoload.php';
+        $autoloadPath = $projectRoot . '/vendor/autoload.php';
+
+        if (!file_exists($autoloadPath)) {
+            static::markTestSkipped('Shopware autoloader not found. Integration tests require a full Shopware installation.');
+        }
+
+        $classLoader = require $autoloadPath;
 
         $kernel = KernelFactory::create(
             environment: 'test',
