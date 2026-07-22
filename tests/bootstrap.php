@@ -2,10 +2,10 @@
 
 // If running in CI → skip Shopware bootstrap
 if (getenv('CI') === 'true') {
-    $vendorPath = __DIR__ . '/../../../vendor/autoload.php';
+    $vendorPath = __DIR__ . '/../vendor/autoload.php';
 
     if (!file_exists($vendorPath)) {
-        $vendorPath = __DIR__ . '/../../../../vendor/autoload.php';
+        $vendorPath = __DIR__ . '/../vendor/autoload.php';
     }
     require $vendorPath;
 
