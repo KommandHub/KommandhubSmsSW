@@ -52,9 +52,17 @@ class SendexaProvider extends AbstractHttpNotificationProvider
         return 'sendexa';
     }
 
+    /**
+     * The "(beta)" suffix is an honesty marker, not decoration: at the time of
+     * writing Sendexa's own docs are partly under construction and no live
+     * traffic has been run through this integration, so a merchant choosing it
+     * from the admin provider list should see that it is less proven than the
+     * others. Drop the suffix once real delivery data backs it — the label is
+     * the only thing that changes.
+     */
     public function getLabel(): string
     {
-        return 'Sendexa';
+        return 'Sendexa (beta)';
     }
 
     protected function getCountryCodes(): array
