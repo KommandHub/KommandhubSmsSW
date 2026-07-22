@@ -66,7 +66,6 @@ class RoutingNotificationGatewayTest extends TestCase
         $gateway->send('2348030000000', 'body');
     }
 
-
     public function testIsConfiguredReflectsWhetherAnyProviderHasCredentials(): void
     {
         $this->assertTrue($this->gateway([new FakeProvider('termii')], default: 'termii')->isConfigured());
@@ -74,6 +73,16 @@ class RoutingNotificationGatewayTest extends TestCase
         $this->assertFalse(
             $this->gateway([new FakeProvider('termii', configured: false)], default: 'termii')->isConfigured(),
         );
+    }
+
+    public function testSendThrowsWhenNoProviderConfigured(): void
+    {
+        $gateway = $this->gateway([], default: 'any');
+
+        $this->expectException(PermanentProviderException::class);
+        $this->expectExceptionMessage('No SMS provider is configured');
+
+        $gateway->send('234', 'body');
     }
 
     /**

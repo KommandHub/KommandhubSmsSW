@@ -212,7 +212,6 @@ class TestMessageServiceTest extends TestCase
         $this->assertNotContains('error', $logger->levels);
     }
 
-
     private function templateExists(string $content): void
     {
         $entity = new SmsTemplateEntity();
@@ -271,6 +270,6 @@ class CollectingLogger extends AbstractLogger
 
     public function log($level, \Stringable|string $message, array $context = []): void
     {
-        $this->levels[] = (string) $level;
+        $this->levels[] = (string)$level;
     }
 }

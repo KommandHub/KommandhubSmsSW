@@ -75,5 +75,4 @@ class NotificationProviderSelector
         // slightly suboptimal route.
         return [...$preferred, ...$willing, ...$rest];
     }
-
 }

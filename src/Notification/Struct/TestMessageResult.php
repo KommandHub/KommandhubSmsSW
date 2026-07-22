@@ -32,7 +32,7 @@ class TestMessageResult
     }
 
     /**
-     * @param string      $reason snippet key, e.g. "invalidRecipient"
+     * @param string $reason snippet key, e.g. "invalidRecipient"
      * @param string|null $detail provider wording, never a credential
      */
     public static function failed(string $reason, ?string $detail = null, ?string $renderedBody = null): self

@@ -177,6 +177,6 @@ class SendSmsAction extends FlowAction implements DelayableAction
     {
         $subject = $flow->getStore('orderId') ?? $flow->getStore('customerId') ?? $flow->getName();
 
-        return implode(':', ['sms', $templateId, $recipient, (string)$subject]);
+        return implode(':', ['sms', $templateId, $recipient, \is_scalar($subject) ? (string)$subject : 'none']);
     }
 }

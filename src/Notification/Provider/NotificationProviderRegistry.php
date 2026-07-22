@@ -52,7 +52,6 @@ class NotificationProviderRegistry
             ?? throw new SmsException(sprintf('Unknown messaging provider "%s".', $name));
     }
 
-
     /**
      * Providers with credentials on this sales channel — the set a send may
      * actually use.

@@ -28,7 +28,6 @@ class SendSmsMessage implements AsyncMessageInterface
     ) {
     }
 
-
     public function getRecipient(): string
     {
         return $this->recipient;

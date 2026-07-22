@@ -120,10 +120,14 @@ class KommandhubSmsSW extends Plugin
             return;
         }
 
+        if (!$this->container) {
+            return;
+        }
+
+        /** @var Connection $connection */
         $connection = $this->container->get(Connection::class);
 
         $connection->executeStatement('DROP TABLE IF EXISTS `kommandhub_sms_template_translation`');
         $connection->executeStatement('DROP TABLE IF EXISTS `kommandhub_sms_template`');
     }
-
 }

@@ -130,7 +130,8 @@ class AfricasTalkingProvider extends AbstractHttpNotificationProvider
             return CredentialCheck::invalid("Africa's Talking rejected these credentials.", $exception->getMessage());
         }
 
-        $balance = $decoded['UserData']['balance'] ?? null;
+        $userData = $decoded['UserData'] ?? null;
+        $balance = \is_array($userData) ? ($userData['balance'] ?? null) : null;
 
         if (!\is_string($balance)) {
             return CredentialCheck::invalid("Africa's Talking did not return account data.", $this->describe($decoded));
@@ -149,12 +150,13 @@ class AfricasTalkingProvider extends AbstractHttpNotificationProvider
      */
     private function extractMessageId(array $decoded): ?string
     {
-        $recipients = $decoded['SMSMessageData']['Recipients'] ?? [];
+        $smsMessageData = $decoded['SMSMessageData'] ?? null;
+        $recipients = \is_array($smsMessageData) ? ($smsMessageData['Recipients'] ?? []) : [];
 
         if (!\is_array($recipients) || $recipients === []) {
             // No recipient entry at all means nothing was queued; the envelope
             // message explains why (commonly an unrecognised sender ID).
-            $message = $decoded['SMSMessageData']['Message'] ?? null;
+            $message = \is_array($smsMessageData) ? ($smsMessageData['Message'] ?? null) : null;
 
             throw new PermanentProviderException(sprintf(
                 "Africa's Talking accepted no recipients: %s",
@@ -163,10 +165,15 @@ class AfricasTalkingProvider extends AbstractHttpNotificationProvider
         }
 
         $recipient = $recipients[0];
-        $statusCode = \is_array($recipient) ? ($recipient['statusCode'] ?? null) : null;
+
+        if (!\is_array($recipient)) {
+            throw new PermanentProviderException("Africa's Talking returned an invalid recipient entry.");
+        }
+
+        $statusCode = $recipient['statusCode'] ?? null;
 
         if (!\in_array($statusCode, self::ACCEPTED_STATUS_CODES, true)) {
-            $status = \is_array($recipient) && \is_string($recipient['status'] ?? null)
+            $status = \is_string($recipient['status'] ?? null)
                 ? $recipient['status']
                 : 'no reason given';
 
@@ -177,7 +184,7 @@ class AfricasTalkingProvider extends AbstractHttpNotificationProvider
             ));
         }
 
-        $messageId = \is_array($recipient) ? ($recipient['messageId'] ?? null) : null;
+        $messageId = $recipient['messageId'] ?? null;
 
         return \is_string($messageId) ? $messageId : null;
     }

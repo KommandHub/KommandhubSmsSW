@@ -64,7 +64,7 @@ class SnippetInterpolationTest extends TestCase
 
     /**
      * @param array<string, mixed> $node
-     * @param array<int, string>   $offenders
+     * @param array<int, string> $offenders
      */
     private function collectOffenders(array $node, string $prefix, array &$offenders): void
     {

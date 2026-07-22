@@ -31,8 +31,8 @@ abstract class ProviderTestCase extends TestCase
     protected array $capturedOptions = [];
 
     /**
-     * @param array<string, mixed>|string $body   the response the provider will see
-     * @param array<string, string>       $settings keyed by full config key, e.g. "termiiApiKey"
+     * @param array<string, mixed>|string $body the response the provider will see
+     * @param array<string, string> $settings keyed by full config key, e.g. "termiiApiKey"
      */
     protected function client(array|string $body, int $status = 200): MockHttpClient
     {
