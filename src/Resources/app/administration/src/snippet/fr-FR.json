@@ -1,6 +1,38 @@
 {
   "kommandhub-sms": {
-    "title": "SMS for Shopware 6"
+    "title": "SMS for Shopware 6",
+    "flowAction": {
+      "label": "Envoyer un SMS",
+      "description": "Envoie le modèle de SMS sélectionné au numéro de mobile du client.",
+      "modal": {
+        "title": "Envoyer un SMS",
+        "hint": "Envoie le modèle sélectionné au client concerné par ce flux. Si le client n'a pas de numéro de mobile utilisable, le SMS est ignoré et le reste du flux — y compris l'e-mail — se poursuit.",
+        "labelTemplate": "Modèle de SMS",
+        "placeholderTemplate": "Sélectionne un modèle de SMS…"
+      }
+    },
+    "testMessage": {
+      "title": "Envoyer un message de test",
+      "hint": "Envoie ce modèle à un numéro maintenant, avec des données de commande et de client d'exemple. Il est facturé comme tout autre message.",
+      "labelRecipient": "Numéro de téléphone du destinataire",
+      "helpTextRecipient": "Le format international est le plus sûr, par exemple +2348030000000. Un numéro local est complété avec l'indicatif par défaut des réglages du plugin.",
+      "placeholderRecipient": "+2348030000000",
+      "labelPreview": "Message généré",
+      "buttonSend": "Envoyer le test",
+      "messageSent": "Message de test envoyé à {recipient}.",
+      "errorUnexpected": "Le message de test n'a pas pu être envoyé.",
+      "error": {
+        "templateNotFound": "Ce modèle n'existe plus. Enregistre-le d'abord, puis réessaie.",
+        "templateEmpty": "Ce modèle n'a pas de texte de message pour la langue sélectionnée.",
+        "renderFailed": "Le modèle n'a pas pu être généré. Vérifie les variables Twig dans le texte du message.",
+        "invalidRecipient": "Ce numéro de téléphone n'est pas utilisable. Utilise le format international, par exemple +2348030000000.",
+        "providerRejected": "Le fournisseur a refusé le message. Vérifie l'ID d'expéditeur et les identifiants dans les réglages du plugin.",
+        "providerUnavailable": "Le fournisseur est temporairement indisponible. Réessaie dans un instant.",
+        "missingRecipient": "Saisis un numéro de téléphone avant l'envoi.",
+        "noProviderConfigured": "Aucun fournisseur n'est encore configuré pour ce canal, rien n'a été envoyé. Configure-en un dans les réglages du plugin.",
+        "errorUnexpected": "Le message de test n'a pas pu être envoyé."
+      }
+    }
   },
   "sw-privileges": {
     "additional_permissions": {

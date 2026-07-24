@@ -7,7 +7,6 @@ namespace Kommandhub\SmsSW\Storefront\Twig;
 use Kommandhub\SmsSW\Setting\Service\Config;
 use Kommandhub\SmsSW\Storefront\DialCode\DialCodeProvider;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
-use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\System\Country\CountryEntity;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
@@ -94,8 +93,10 @@ class DialCodeExtension extends AbstractExtension
             return null;
         }
 
+        // Criteria([$countryId]) already restricts to that id; a separate
+        // EqualsFilter('id', ...) is both redundant and forbidden by store
+        // compliance.
         $criteria = new Criteria([$countryId]);
-        $criteria->addFilter(new EqualsFilter('id', $countryId));
 
         $country = $this->countryRepository->search($criteria, $context->getContext())->first();
 

@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://kommandhub.com" target="_blank">
+    <img src="src/Resources/config/kommandhub.png" alt="Kommandhub Logo">
+  </a>
+</p>
+
 # SMS for Shopware 6
 
 Transactional SMS for Shopware 6, sent alongside core email, with multi-provider direct-carrier routing for African networks.
