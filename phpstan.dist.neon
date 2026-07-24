@@ -13,6 +13,17 @@ parameters:
         - identifier: missingType.iterableValue
         - identifier: missingType.generics
 
+        # StringTemplateRenderer is marked @internal (becomes-internal in 6.8),
+        # but it is the only sandboxed Twig-string renderer Shopware exposes and
+        # core's own MailService depends on it exactly as we do. There is no
+        # public replacement to migrate to, so this dependency is unavoidable
+        # until Shopware ships one; scoped to this class only.
+        - message: '#(deprecated|internal) class Shopware\\Core\\Framework\\Adapter\\Twig\\StringTemplateRenderer#'
+          paths:
+            - 'src/Flow/Action/SendSmsAction.php'
+            - 'src/Notification/Service/TestMessageService.php'
+          reportUnmatched: false
+
     parallel:
         jobSize: 20
         maximumNumberOfProcesses: 32

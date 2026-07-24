@@ -79,7 +79,7 @@ Component.register('kommandhub-sms-template-list', {
             try {
                 this.templates = await this.repository.search(this.criteria, Shopware.Context.api);
                 this.total = this.templates.total;
-            } catch (error) {
+            } catch {
                 this.createNotificationError({
                     message: this.$tc('kommandhub-sms-template.list.messageLoadError'),
                 });

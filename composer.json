@@ -1,8 +1,8 @@
 {
     "name": "kommandhub/sms-sw",
-    "description": "Transactional SMS for Shopware 6 with multi-provider routing for African networks (Termii, Sendexa, Africa's Talking, Twilio).",
+    "description": "Transactional SMS for Shopware 6, sent from the Flow Builder alongside your emails, with multi-provider routing for Termii, Sendexa, Africa's Talking and Twilio.",
     "type": "shopware-platform-plugin",
-    "version": "0.1.0",
+    "version": "0.9.0-beta.1",
     "license": "Apache-2.0",
     "keywords": [
         "shopware",
@@ -59,9 +59,9 @@
             "fr-FR": "SMS pour Shopware 6"
         },
         "description": {
-            "de-DE": "Transactional SMS for Shopware 6 with multi-provider routing for African networks (Termii, Sendexa, Africa's Talking, Twilio).",
-            "en-GB": "Transactional SMS for Shopware 6 with multi-provider routing for African networks (Termii, Sendexa, Africa's Talking, Twilio).",
-            "fr-FR": "Transactional SMS for Shopware 6 with multi-provider routing for African networks (Termii, Sendexa, Africa's Talking, Twilio)."
+            "en-GB": "Transactional SMS for Shopware 6, sent from the Flow Builder alongside your emails, with multi-provider routing for Termii, Sendexa, Africa's Talking and Twilio.",
+            "de-DE": "Transaktionale SMS für Shopware 6, ausgelöst über den Flow Builder ergänzend zu E-Mails, mit Multi-Provider-Routing für Termii, Sendexa, Africa's Talking und Twilio.",
+            "fr-FR": "SMS transactionnels pour Shopware 6, envoyés depuis le Flow Builder avec les e-mails, et routage multi-fournisseurs : Termii, Sendexa, Africa's Talking et Twilio."
         },
         "manufacturerLink": {
             "de-DE": "https://kommandhub.com",

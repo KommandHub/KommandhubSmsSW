@@ -81,7 +81,7 @@ Component.register('kommandhub-test-message-modal', {
                 }
 
                 this.createNotificationError({ message: this.describeFailure(result) });
-            } catch (error) {
+            } catch {
                 // A transport or permission failure never reached the service,
                 // so there is no structured reason to translate.
                 this.createNotificationError({

@@ -1,8 +1,6 @@
 import './page/sms-template-list';
 import './page/sms-template-detail';
 
-import enGB from './snippet/en-GB.json';
-import deDE from './snippet/de-DE.json';
 
 const { Module } = Shopware;
 
@@ -28,11 +26,6 @@ Module.register('kommandhub-sms-template', {
     icon: 'regular-comments',
     favicon: 'icon-module-settings.png',
     entity: 'kommandhub_sms_template',
-
-    snippets: {
-        'en-GB': enGB,
-        'de-DE': deDE,
-    },
 
     routes: {
         index: {
