@@ -10,7 +10,8 @@ Transactional SMS for Shopware 6, sent alongside core email, with multi-provider
 
 [![Shopware](https://img.shields.io/badge/Shopware-~6.6.0%20%7C%7C%20~6.7.0-189eff)](https://www.shopware.com/)
 [![PHP](https://img.shields.io/badge/PHP-8.2%2B-777bb4)](https://www.php.net/)
-[![License](https://img.shields.io/badge/license-Apache-2.0-blue)](LICENSE)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![PHPStan](https://img.shields.io/badge/PHPStan-level%209-brightgreen.svg)](https://phpstan.org)
 
 ## Table of contents
 
